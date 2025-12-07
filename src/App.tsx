@@ -1,22 +1,26 @@
 import './App.css'
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 function App() {
 
-  const [tracks, setTracks] = useState([
-    {
-      id: 0,
-      title: 'Track 1',
-      url: '.',
-    },
-    {
-      id: 1,
-      title: 'Track 2',
-      url: '.',
-    },
-  ])
+  const [tracks, setTracks] = useState({
 
+  })
   const [selectedTrackId, setSelectedTrackId] = useState(null)
+
+  useEffect(() => {
+    console.log('effect')
+    fetch('', {
+      headers: {
+        'api-key': '6753c43d-1faf-4388-9ec0-6346446e0082'
+      }
+    })
+      .then(response => response.json())
+      .then(json => setTracks(json.data))
+  }, [])
+
+  console.log(tracks)
+  // https://musicfun.it-incubator.app/api/1.0/playlists/tracks
 
 
   if (tracks === null) {
@@ -38,28 +42,28 @@ function App() {
   }
 
   return (
-    <div>
+    <div
+      style={{
+        paddingInline: 16,
+      }}
+    >
       <h1>Tracks</h1>
       <button onClick={() => setSelectedTrackId(null)}>reset</button>
-      {tracks.length > 0
-        ?
         <ul>
-          {tracks.map(({id, title, url}) => (
+          {tracks.map((track) => (
             <li
-              key={id}
-              className={id === selectedTrackId ? 'is-selected' : ''}
-              onClick={() => setSelectedTrackId(id)}
+              key={track.id}
+              className={track.id === selectedTrackId ? 'is-selected' : ''}
+              onClick={() => setSelectedTrackId(track.id)}
             >
-              <div>{title}</div>
+              <div>{track.attributes.title}</div>
               <audio
-                src={url}
+                src={track.attributes.attachments[0].url}
                 controls
               ></audio>
             </li>
           ))}
         </ul>
-        : <span>no tracks</span>
-      }
     </div>
   )
 }
